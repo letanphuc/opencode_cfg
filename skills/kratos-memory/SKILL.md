@@ -9,9 +9,9 @@ Use `npx kratos-memory` for persistent, searchable memory that survives across s
 
 ## Workflow
 
-1. **Before starting any task**: Run `npx kratos-memory search "<query>"` to recall relevant context from past sessions.
-2. **After learning something important**: Run `npx kratos-memory save "<observation>" --tags <tag1,tag2>` to persist it.
-3. **Periodically check**: Run `npx kratos-memory status` to see memory stats.
+1. **Before starting any task**: Run `bash: npx kratos-memory search "<query>"` to recall relevant context from past sessions.
+2. **After learning something important**: Run `bash: npx kratos-memory save "<observation>" --tags <tag1,tag2>` to persist it.
+3. **Periodically check**: Run `bash: npx kratos-memory status` to see memory stats.
 
 ## Commands
 
@@ -47,5 +47,5 @@ Use meaningful tags: `architecture`, `auth`, `bug`, `config`, `api`, `database`,
 
 - `~/.kratos/projects/` — per-project SQLite databases
 - Automatically detects project from cwd
-- Use `npx kratos-memory switch <path>` to change project scope
+- Use `bash: npx kratos-memory switch <path>` to change project scope
 - Add `--global` flag to any command for cross-project memory

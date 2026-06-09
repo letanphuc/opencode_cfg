@@ -7,14 +7,14 @@ You have access to `npx kratos-memory` for persistent, cross-session memory. Use
 Always search kratos-memory for relevant context:
 
 ```
-npx kratos-memory search "<query>" --json
+bash: npx kratos-memory search "<query>" --json
 ```
 
 Also check recent memories and project summary:
 
 ```
-npx kratos-memory recent --limit 10 --json
-npx kratos-memory summary --json
+bash: npx kratos-memory recent --limit 10 --json
+bash: npx kratos-memory summary --json
 ```
 
 ## During work
@@ -22,7 +22,7 @@ npx kratos-memory summary --json
 Save important observations as you go. Do NOT batch saves at the end — save in real time as you learn:
 
 ```
-npx kratos-memory save "<what you learned>" --tags <tag1,tag2> --importance <1-5>
+bash: npx kratos-memory save "<what you learned>" --tags <tag1,tag2> --importance <1-5>
 ```
 
 ### What to save
@@ -52,7 +52,7 @@ Use these tags: `architecture`, `convention`, `config`, `bug`, `api`, `auth`, `d
 If the user works in a different directory, run:
 
 ```
-npx kratos-memory switch <path>
+bash: npx kratos-memory switch <path>
 ```
 
 Then search memories for that project before starting.
