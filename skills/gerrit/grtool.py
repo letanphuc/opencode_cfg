@@ -6,6 +6,7 @@ import fnmatch
 import json
 import os
 from pathlib import Path
+import shlex
 import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Sequence
@@ -148,6 +149,41 @@ class GerritClient:
         os.makedirs(output_dir, exist_ok=True)
         subprocess.run(["tar", "xf", "-", "-C", output_dir],
                        input=result.stdout, capture_output=True, check=True)
+
+    def post_review(
+        self,
+        change_id: str,
+        message: Optional[str] = None,
+        code_review: Optional[str] = None,
+        verified: Optional[str] = None,
+    ) -> None:
+        """Post a review comment and/or vote on a Gerrit change via SSH."""
+        cmd = [
+            "ssh",
+            "-p",
+            str(self.connection.port),
+            f"{self.connection.user}@{self.connection.host}",
+            "gerrit",
+            "review",
+            change_id,
+        ]
+        if message:
+            cmd.extend(["--message", shlex.quote(message)])
+        if code_review:
+            cmd.extend(["--code-review", code_review])
+        if verified:
+            cmd.extend(["--verified", verified])
+
+        logger.info("Posting review on {}: code-review={}, verified={}, msg_len={}",
+                     change_id, code_review, verified, len(message or ""))
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            logger.warning("Review failed (rc={}): {}", result.returncode, result.stderr.strip())
+            return
+        if result.stdout.strip():
+            logger.info("Response: {}", result.stdout.strip())
+        if result.stderr.strip():
+            logger.info("{}", result.stderr.strip())
 
     def _build_query_str(
         self,
@@ -838,6 +874,36 @@ def cmd_search(args):
         logger.info(format_change_summary(change))
 
 
+def cmd_review(args):
+    connection = resolve_connection_args(args)
+    client = GerritClient(connection)
+
+    # Resolve change ID — if numeric, auto-append current patchset
+    change_id = str(args.change)
+    if change_id.isdigit():
+        change = client.get_change_by_number(number=change_id)
+        if not change:
+            logger.error("Change not found: {}", args.change)
+            return
+        ps = change.get("currentPatchSet", {})
+        ps_num = ps.get("number", ps.get("revision", ""))
+        if ps_num:
+            change_id = f"{change_id},{ps_num}"
+        else:
+            logger.warning("Could not resolve patchset for {}", args.change)
+    elif "," in change_id:
+        pass  # already has patchset
+    else:
+        pass  # treat as-is (e.g. commit SHA)
+
+    client.post_review(
+        change_id=change_id,
+        message=args.message,
+        code_review=args.code_review,
+        verified=args.verified,
+    )
+
+
 def cmd_reset_to(args):
     connection = resolve_connection_args(args)
     client = GerritClient(connection)
@@ -948,6 +1014,31 @@ def build_parser():
     )
     add_connection_args(patch_parser)
     patch_parser.set_defaults(func=cmd_patch)
+
+    review_parser = subparsers.add_parser(
+        "review",
+        help="Post a review comment and/or vote on a Gerrit change",
+    )
+    review_parser.add_argument(
+        "change",
+        help="Change number (auto-resolves patchset), or change,patchset",
+    )
+    review_parser.add_argument(
+        "-m", "--message",
+        help="Review message/comment to post",
+    )
+    review_parser.add_argument(
+        "--code-review",
+        choices=["-2", "-1", "+1", "+2"],
+        help="Code-Review vote: +2/+1/-1/-2",
+    )
+    review_parser.add_argument(
+        "--verified",
+        choices=["-1", "+1"],
+        help="Verified vote: +1/-1",
+    )
+    add_connection_args(review_parser)
+    review_parser.set_defaults(func=cmd_review)
 
     search_parser = subparsers.add_parser(
         "search", help="Search Gerrit changes by author, reviewer, label, branch, etc."

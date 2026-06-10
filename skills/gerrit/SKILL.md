@@ -127,6 +127,20 @@ gr.sh diff 12345
 gr.sh diff 12345 -o changes.patch
 ```
 
+### `review` — Post review comment and/or vote
+
+```bash
+gr.sh review 6377 -m "LGTM" --code-review +1
+gr.sh review 6377 --code-review +2 --verified +1
+gr.sh review 6377 -m "Looks good, but see note about SR1XX configs."
+```
+
+```bash
+# Vote options
+--code-review -2|-1|+1|+2
+--verified -1|+1
+```
+
 ### `reset-to` — Apply changes to local repos
 
 Resolves Gerrit project → local path via `west list`. Fetches + checkouts (or pulls).
