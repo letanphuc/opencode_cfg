@@ -23,13 +23,6 @@
         "9r/gc/gemini-3-pro-preview": { "id": "gc/gemini-3-pro-preview", "name": "Gemini 3 Pro Preview" },
         "9r/openrouter/minimax-minimax-m2.5:free": { "id": "openrouter/minimax/minimax-m2.5:free", "name": "MiniMax M2.5 (Free)" },
         "9r/openrouter/openrouter/free": { "id": "openrouter/openrouter/free", "name": "OpenRouter Free" },
-        "9r/bpm/seed-2-0-pro-260328": { "id": "bpm/seed-2-0-pro-260328", "name": "Seed 2.0 Pro" },
-        "9r/bpm/seed-2-0-code-preview-260328": { "id": "bpm/seed-2-0-code-preview-260328", "name": "Seed 2.0 Code Preview" },
-        "9r/bpm/seed-2-0-mini-260215": { "id": "bpm/seed-2-0-mini-260215", "name": "Seed 2.0 Mini" },
-        "9r/bpm/seed-2-0-lite-260228": { "id": "bpm/seed-2-0-lite-260228", "name": "Seed 2.0 Lite" },
-        "9r/bpm/kimi-k2-thinking-251104": { "id": "bpm/kimi-k2-thinking-251104", "name": "Kimi K2 Thinking" },
-        "9r/bpm/glm-4-7-251222": { "id": "bpm/glm-4-7-251222", "name": "GLM 4.7" },
-        "9r/bpm/gpt-oss-120b-250805": { "id": "bpm/gpt-oss-120b-250805", "name": "GPT OSS 120B" },
         "9r/ag/gemini-3.5-flash-extra-low": { "id": "ag/gemini-3.5-flash-extra-low", "name": "Gemini 3.5 Flash Extra Low" },
         "9r/ag/gemini-3-flash-agent": { "id": "ag/gemini-3-flash-agent", "name": "Gemini 3 Flash Agent" },
         "9r/ag/gemini-3.5-flash-low": { "id": "ag/gemini-3.5-flash-low", "name": "Gemini 3.5 Flash Low" },
@@ -47,7 +40,9 @@
         "9r/ocg/minimax-m2.7": { "id": "ocg/minimax-m2.7", "name": "MiniMax M2.7" },
         "9r/ocg/minimax-m2.5": { "id": "ocg/minimax-m2.5", "name": "MiniMax M2.5" },
         "9r/ocg/deepseek-v4-pro": { "id": "ocg/deepseek-v4-pro", "name": "DeepSeek V4 Pro" },
-        "9r/ocg/deepseek-v4-flash": { "id": "ocg/deepseek-v4-flash", "name": "DeepSeek V4 Flash" }
+        "9r/ocg/deepseek-v4-flash": { "id": "ocg/deepseek-v4-flash", "name": "DeepSeek V4 Flash" },
+        "9r/siliconflow/deepseek-ai/DeepSeek-V4-Pro": { "id": "siliconflow/deepseek-ai/DeepSeek-V4-Pro", "name": "SiliconFlow DeepSeek V4 Pro" },
+        "9r/siliconflow/deepseek-ai/DeepSeek-V4-Flash": { "id": "siliconflow/deepseek-ai/DeepSeek-V4-Flash", "name": "SiliconFlow DeepSeek V4 Flash" }
       }
     }
   }
