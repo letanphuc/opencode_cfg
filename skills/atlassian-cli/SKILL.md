@@ -44,8 +44,9 @@ digraph auth_check {
 # Check if authenticated
 acli auth status
 
-# If not authenticated, login first
-acli auth login
+# ONLY if status shows NOT authenticated:
+#   acli auth login
+# If status shows "✓ Authenticated", do NOT re-authenticate — proceed directly.
 ```
 
 ## Command Structure
@@ -190,6 +191,7 @@ acli jira workitem create --editor
 | Bash loops for creation | Inefficient, built-in features exist | Use `create-bulk`, `--from-json` |
 | One-by-one edits | Slow for bulk operations | Use `--jql` or `--filter` with edit/transition |
 | Making up commands | Wastes time | Run `acli <product> <entity> --help` to verify |
+| Re-authenticating when already authenticated | Unnecessary, wastes time | Check `acli auth status`; if "✓ Authenticated", proceed directly |
 
 ## Red Flags - STOP and Check Skill
 
@@ -202,7 +204,8 @@ These indicate you're about to make a mistake:
 - Using `--columns` instead of `--fields`
 - Making up command names without checking --help
 - "The old syntax probably still works"
-- "They're probably already authenticated"
+- "They're probably already authenticated" — check status, don't guess
+- Re-running `acli auth login` when `acli auth status` already shows "✓ Authenticated"
 - "A bash loop is more flexible than built-in commands"
 
 **All of these mean: Stop, re-read this skill, use correct syntax.**
