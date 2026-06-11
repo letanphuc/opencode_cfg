@@ -87,4 +87,4 @@ gr.sh review 6377 --code-review +2 --verified +1 -m "LGTM"
 - Prefer `+1` with notes over `+2` unless you're fully confident — leaves room for the author to consider feedback
 - If the Jira ticket isn't linked in the commit subject, check Gerrit's topic or description
 - For multi-file CLs, read each file's surrounding context, not just the diff hunks
-- Save key observations to kratos-memory for future sessions
+- Save key observations for future sessions
