@@ -141,6 +141,19 @@ gr.sh review 6377 -m "Looks good, but see note about SR1XX configs."
 --verified -1|+1
 ```
 
+### `set-topic` — Set topic on one or more changes
+
+Uses the Gerrit SSH command directly (`gr.sh` does not wrap this yet).
+
+```bash
+ssh -p 29418 gale@gerrit-ssh.mijo.services gerrit set-topic -t <TOPIC> <CHANGE_ID> [CHANGE_ID ...]
+```
+
+Example:
+```bash
+ssh -p 29418 gale@gerrit-ssh.mijo.services gerrit set-topic -t AW-1979 6403 6404 6405 6406 6407 6408 6409
+```
+
 ### `reset-to` — Apply changes to local repos
 
 Resolves Gerrit project → local path via `west list`. Fetches + checkouts (or pulls).
