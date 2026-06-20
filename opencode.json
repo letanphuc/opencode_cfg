@@ -4,6 +4,14 @@
   "permission": {
     ".env": "allow"
   },
+  "mcp": {
+    "memos": {
+      "type": "local",
+      "cwd": "{env:HOME}/.config/opencode",
+      "command": ["npx", "-y", "tsx", "mcp/memos/index.ts", "memos.env"],
+      "enabled": true
+    }
+  },
   "provider": {
     "9r": {
       "name": "9r",
