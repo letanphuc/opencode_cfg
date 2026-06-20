@@ -106,3 +106,13 @@ Filters follow Google AIP-160 (CEL). Examples:
 filter="row_status == \"NORMAL\""
 filter="creator == \"users/1\""
 ```
+
+## Tagging Notes
+
+The MCP `memos_update` tool does not expose a `tags` parameter. To tag a note, append the tag to the end of the note content:
+
+```
+#tag1 #tag2
+```
+
+Then call `memos_update` with `updateMask="content"` and the updated content.
