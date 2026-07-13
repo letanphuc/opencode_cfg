@@ -229,7 +229,11 @@ def main():
     connection = None
     try:
         if args.path and not patterns and not args.dry_run:
-            return smbclient_download(args.host, args.share, args.user, args.password, remote_list_path, out_root)
+            local_path_root = os.path.join(out_root, *args.path.strip("/").split("/"))
+            rc = smbclient_download(args.host, args.share, args.user, args.password, remote_list_path, local_path_root)
+            if rc == 0:
+                return 0
+            print("smbclient failed; falling back to Python SMB download.", file=sys.stderr)
 
         connection, tree = connect(args.host, args.share, args.user, args.password)
         for rel, remote_path in files_in_path(tree, remote_root, args.path):

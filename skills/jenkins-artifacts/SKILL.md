@@ -13,36 +13,42 @@ The helper script is in this skill directory:
 ~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py
 ```
 
+Use the shell wrapper to load `.jenkins.env` automatically:
+
+```bash
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19
+```
+
 ## Common Usage
 
 Download the default artifact path for a job/build (`FLATBUILD/eMMC/`):
 
 ```bash
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19
 ```
 
 Use another artifact subpath:
 
 ```bash
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19 --path FLATBUILD/eMMC/
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19 --path FLATBUILD/eMMC/
 ```
 
 Download only matching filenames:
 
 ```bash
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19 --filter '*.img'
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19 --filter '*.img'
 ```
 
 Filters can also be positional:
 
 ```bash
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19 '*.img'
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19 '*.img'
 ```
 
 Preview matches without downloading:
 
 ```bash
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19 --dry-run --filter '*.img'
+~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.sh BuildWearOS7-BB2 19 --dry-run --filter '*.img'
 ```
 
 ## Behavior
@@ -58,12 +64,12 @@ Preview matches without downloading:
 
 ## Authentication
 
-The script uses the same SMB host/share/user defaults as `/workspace/wear/pdk/script/_smb_download.py`. Provide the SMB password with an environment variable:
+The wrapper loads credentials from `~/.config/opencode/skills/jenkins-artifacts/.jenkins.env`, which is ignored by git:
 
 ```bash
+export JENKINS_SMB_HOST="192.168.1.114"
 export JENKINS_SMB_USER='<username>'
 export JENKINS_SMB_PASSWORD='<password>'
-~/.config/opencode/skills/jenkins-artifacts/download_jenkins_artifacts.py BuildWearOS7-BB2 19 --filter '*.img'
 ```
 
 Or pass them explicitly:

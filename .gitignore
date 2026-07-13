@@ -8,3 +8,4 @@ bun.lock
 **/*.pyc
 .env
 memos.env
+skills/jenkins-artifacts/.jenkins.env
