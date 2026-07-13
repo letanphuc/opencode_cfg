@@ -11,6 +11,8 @@ import argparse
 import fnmatch
 import os
 import posixpath
+import shutil
+import subprocess
 import sys
 import time
 import uuid
@@ -35,6 +37,7 @@ DEFAULT_HOST = "192.168.1.114"
 DEFAULT_SHARE = "Jenkins"
 DEFAULT_USER = "mijo"
 DEFAULT_OUT = "download"
+DEFAULT_ARTIFACT_PATH = "FLATBUILD/eMMC/"
 READ_SIZE = 1024 * 1024
 
 
@@ -93,6 +96,10 @@ def unc_path(host, share, remote_path):
     return "\\\\" + "\\".join([host, share, remote_path])
 
 
+def smbclient_cd_path(remote_path):
+    return "/".join(part for part in remote_path.split("\\") if part)
+
+
 def crawl(tree, remote_dir, prefix=""):
     for name, is_dir in list_dir(tree, remote_dir):
         rel = posixpath.join(prefix, name)
@@ -101,6 +108,16 @@ def crawl(tree, remote_dir, prefix=""):
             yield from crawl(tree, remote_path, rel)
         else:
             yield rel, remote_path
+
+
+def files_in_path(tree, remote_root, artifact_path):
+    rel_root = artifact_path.strip("/")
+    remote_dir = join_remote(remote_root, *rel_root.split("/"))
+    for name, is_dir in list_dir(tree, remote_dir):
+        if is_dir:
+            continue
+        rel = posixpath.join(rel_root, name)
+        yield rel, join_remote(remote_dir, name)
 
 
 def matches(rel, patterns):
@@ -162,12 +179,33 @@ def download_file(tree, remote_path, local_path):
     return total, False
 
 
+def smbclient_download(host, share, user, password, remote_path, out_root):
+    if shutil.which("smbclient") is None:
+        raise RuntimeError("smbclient is not installed")
+
+    os.makedirs(out_root, exist_ok=True)
+    service = f"//{host}/{share}"
+    commands = [
+        "prompt OFF",
+        "recurse ON",
+        f"lcd {out_root}",
+        f"cd {smbclient_cd_path(remote_path)}",
+        "mget *",
+    ]
+    result = subprocess.run(
+        ["smbclient", service, "-U", f"{user}%{password}", "-c", "; ".join(commands)],
+        check=False,
+    )
+    return result.returncode
+
+
 def main():
     parser = argparse.ArgumentParser(description="Download artifacts from a Jenkins build via SMB.")
     parser.add_argument("job", help="Jenkins job name, for example BuildWearOS7-BB2")
     parser.add_argument("build", type=int, help="Jenkins build number")
     parser.add_argument("patterns", nargs="*", help="Optional glob filters")
     parser.add_argument("--filter", "-f", action="append", default=[], help="Glob filter; repeatable")
+    parser.add_argument("--path", default=DEFAULT_ARTIFACT_PATH, help=f"Artifact subpath to download (default: {DEFAULT_ARTIFACT_PATH})")
     parser.add_argument("--out", "-o", default=DEFAULT_OUT, help=f"Output directory (default: {DEFAULT_OUT})")
     parser.add_argument("--host", default=os.environ.get("JENKINS_SMB_HOST", DEFAULT_HOST), help=f"SMB host (default: {DEFAULT_HOST})")
     parser.add_argument("--share", default=os.environ.get("JENKINS_SMB_SHARE", DEFAULT_SHARE), help=f"SMB share (default: {DEFAULT_SHARE})")
@@ -182,14 +220,19 @@ def main():
         return 1
 
     remote_root = join_remote("jobs", args.job, "builds", args.build, "archive", "Artifact", args.build)
+    remote_list_path = join_remote(remote_root, *args.path.strip("/").split("/"))
     out_root = os.path.join(args.out, args.job, str(args.build))
 
-    print(f"Listing: {unc_path(args.host, args.share, remote_root)}")
+    action = "Copying" if args.path and not patterns and not args.dry_run else "Listing"
+    print(f"{action}: {unc_path(args.host, args.share, remote_list_path)}")
     matched = 0
     connection = None
     try:
+        if args.path and not patterns and not args.dry_run:
+            return smbclient_download(args.host, args.share, args.user, args.password, remote_list_path, out_root)
+
         connection, tree = connect(args.host, args.share, args.user, args.password)
-        for rel, remote_path in crawl(tree, remote_root):
+        for rel, remote_path in files_in_path(tree, remote_root, args.path):
             if not matches(rel, patterns):
                 continue
             matched += 1
