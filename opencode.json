@@ -1,6 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["AGENTS.md"],
+  "compaction": {
+    "auto": true
+  },
   "permission": {
     ".env": "allow"
   },
@@ -10,6 +12,10 @@
       "cwd": "{env:HOME}/.config/opencode",
       "command": ["npx", "-y", "tsx", "mcp/memos/index.ts", "memos.env"],
       "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
     }
   },
   "provider": {
